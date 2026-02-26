@@ -40,7 +40,7 @@ AI-powered platform for content adaptation, distribution, and monetization using
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/ashiq-firoz/Creator-Studio.git
 cd creator-dashboard
 ```
 
