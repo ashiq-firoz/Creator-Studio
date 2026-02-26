@@ -254,12 +254,4 @@ aws dynamodb update-table \
 - Check AWS credentials in `.env`
 - For LocalStack: ensure service is running
 
-## License
 
-MIT License - see LICENSE file for details
-
-## Support
-
-For issues and questions:
-- GitHub Issues: [repository-url]/issues
-- Documentation: [repository-url]/docs
