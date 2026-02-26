@@ -1,0 +1,418 @@
+# System Flow Diagrams
+
+## 1. Video Upload and Processing Flow
+
+```
+┌─────────────┐
+│    User     │
+└──────┬──────┘
+       │ 1. Upload video
+       ▼
+┌─────────────────┐
+│    Frontend     │
+│   (Next.js)     │
+└──────┬──────────┘
+       │ 2. POST /content/upload
+       ▼
+┌─────────────────┐
+│   Backend API   │
+│   (FastAPI)     │
+└──────┬──────────┘
+       │ 3. Generate presigned URL
+       ▼
+┌─────────────────┐
+│   Amazon S3     │
+│  (Video Store)  │
+└──────┬──────────┘
+       │ 4. Upload complete
+       ▼
+┌─────────────────┐
+│  Celery Worker  │
+│ (process_video) │
+└──────┬──────────┘
+       │ 5. Extract metadata
+       ▼
+┌─────────────────┐
+│   FFmpeg        │
+│ (Video Analysis)│
+└──────┬──────────┘
+       │ 6. Metadata
+       ▼
+┌─────────────────┐
+│   DynamoDB      │
+│ (Update Content)│
+└──────┬──────────┘
+       │ 7. Trigger adaptation
+       ▼
+┌─────────────────┐
+│  Celery Worker  │
+│(generate_adapt) │
+└──────┬──────────┘
+       │
+       ├─────────────────┬─────────────────┬─────────────────┐
+       │                 │                 │                 │
+       ▼                 ▼                 ▼                 ▼
+   YouTube           Instagram          TikTok           Twitter
+   (16:9)             (1:1)            (9:16)           (16:9)
+       │                 │                 │                 │
+       └─────────────────┴─────────────────┴─────────────────┘
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │  Amazon Bedrock │
+                    │  (Nova Models)  │
+                    │ Generate Metadata│
+                    └─────────┬───────┘
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │   Amazon S3     │
+                    │ (Store Adapted) │
+                    └─────────┬───────┘
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │   DynamoDB      │
+                    │(Save Adaptations)│
+                    └─────────────────┘
+```
+
+## 2. Content Distribution Flow
+
+```
+┌─────────────┐
+│    User     │
+│  Selects    │
+│  Platforms  │
+└──────┬──────┘
+       │ 1. POST /distribute
+       ▼
+┌─────────────────┐
+│   Backend API   │
+│ Create Publish  │
+│      Job        │
+└──────┬──────────┘
+       │ 2. Get adaptations
+       ▼
+┌─────────────────┐
+│   DynamoDB      │
+│  (Adaptations)  │
+└──────┬──────────┘
+       │ 3. Retrieve files
+       ▼
+┌─────────────────┐
+│   Amazon S3     │
+│ (Adapted Videos)│
+└──────┬──────────┘
+       │
+       ├─────────────┬─────────────┬─────────────┐
+       │             │             │             │
+       ▼             ▼             ▼             ▼
+┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
+│ YouTube  │  │Instagram │  │  TikTok  │  │ Twitter  │
+│   API    │  │   API    │  │   API    │  │   API    │
+└────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘
+     │             │             │             │
+     └─────────────┴─────────────┴─────────────┘
+                   │
+                   ▼
+         ┌─────────────────┐
+         │   DynamoDB      │
+         │ (Update Status) │
+         └─────────┬───────┘
+                   │
+                   ▼
+         ┌─────────────────┐
+         │    Frontend     │
+         │ (Show Results)  │
+         └─────────────────┘
+```
+
+## 3. Analytics Collection Flow
+
+```
+┌─────────────────┐
+│  Celery Beat    │
+│ (Every 15 min)  │
+└──────┬──────────┘
+       │ Trigger
+       ▼
+┌─────────────────┐
+│  Celery Worker  │
+│(collect_analytics)│
+└──────┬──────────┘
+       │ 1. Get published content
+       ▼
+┌─────────────────┐
+│   DynamoDB      │
+│ (Content List)  │
+└──────┬──────────┘
+       │
+       ├─────────────┬─────────────┬─────────────┐
+       │             │             │             │
+       ▼             ▼             ▼             ▼
+┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
+│ YouTube  │  │Instagram │  │  TikTok  │  │ Twitter  │
+│Analytics │  │ Insights │  │Analytics │  │Analytics │
+└────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘
+     │             │             │             │
+     └─────────────┴─────────────┴─────────────┘
+                   │ Metrics
+                   ▼
+         ┌─────────────────┐
+         │   DynamoDB      │
+         │ (Store Metrics) │
+         └─────────┬───────┘
+                   │
+                   ▼
+         ┌─────────────────┐
+         │    Frontend     │
+         │   Dashboard     │
+         │  (Visualize)    │
+         └─────────────────┘
+```
+
+## 4. AI-Powered Ad Placement Flow
+
+```
+┌─────────────┐
+│    User     │
+│  Requests   │
+│ Ad Analysis │
+└──────┬──────┘
+       │ POST /monetization/analyze
+       ▼
+┌─────────────────┐
+│   Backend API   │
+│ Trigger Analysis│
+└──────┬──────────┘
+       │
+       ▼
+┌─────────────────┐
+│  Celery Worker  │
+│(analyze_ad_     │
+│  placements)    │
+└──────┬──────────┘
+       │ 1. Get video
+       ▼
+┌─────────────────┐
+│   Amazon S3     │
+│ (Download Video)│
+└──────┬──────────┘
+       │ 2. Extract frames
+       ▼
+┌─────────────────┐
+│   FFmpeg/CV2    │
+│ (Frame Extract) │
+└──────┬──────────┘
+       │ 3. Analyze frames
+       ▼
+┌─────────────────┐
+│ Amazon Bedrock  │
+│  Nova 2 Omni    │
+│ (Vision Model)  │
+└──────┬──────────┘
+       │ 4. Detect surfaces
+       ▼
+┌─────────────────┐
+│  AI Analysis    │
+│ - Flat surfaces │
+│ - Placement area│
+│ - Confidence    │
+└──────┬──────────┘
+       │ 5. Store placements
+       ▼
+┌─────────────────┐
+│   DynamoDB      │
+│ (Ad Placements) │
+└──────┬──────────┘
+       │ 6. Return results
+       ▼
+┌─────────────────┐
+│    Frontend     │
+│ (Show Overlay   │
+│   Suggestions)  │
+└─────────────────┘
+```
+
+## 5. Authentication Flow
+
+```
+┌─────────────┐
+│    User     │
+└──────┬──────┘
+       │ 1. Register/Login
+       ▼
+┌─────────────────┐
+│    Frontend     │
+└──────┬──────────┘
+       │ 2. POST /auth/login
+       ▼
+┌─────────────────┐
+│   Backend API   │
+└──────┬──────────┘
+       │ 3. Verify credentials
+       ▼
+┌─────────────────┐
+│   DynamoDB      │
+│  (Users Table)  │
+└──────┬──────────┘
+       │ 4. User found
+       ▼
+┌─────────────────┐
+│  Bcrypt Verify  │
+│ (Check Password)│
+└──────┬──────────┘
+       │ 5. Password valid
+       ▼
+┌─────────────────┐
+│  JWT Generator  │
+│ (Create Token)  │
+└──────┬──────────┘
+       │ 6. Return token
+       ▼
+┌─────────────────┐
+│    Frontend     │
+│ (Store Token)   │
+└──────┬──────────┘
+       │ 7. Subsequent requests
+       ▼
+┌─────────────────┐
+│   Backend API   │
+│ (Verify Token)  │
+└──────┬──────────┘
+       │ 8. Token valid
+       ▼
+┌─────────────────┐
+│  Protected      │
+│  Resources      │
+└─────────────────┘
+```
+
+## 6. Data Storage Architecture
+
+```
+┌─────────────────────────────────────────────────┐
+│              Amazon S3 Bucket                   │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  uploads/                                       │
+│  ├── {user_id}/                                │
+│  │   └── {content_id}/                        │
+│  │       └── original.mp4                     │
+│                                                 │
+│  adaptations/                                   │
+│  ├── {content_id}/                             │
+│  │   ├── youtube/                             │
+│  │   │   ├── video.mp4                        │
+│  │   │   └── thumbnail.png                    │
+│  │   ├── instagram/                           │
+│  │   │   ├── video.mp4                        │
+│  │   │   └── thumbnail.png                    │
+│  │   ├── tiktok/                              │
+│  │   │   ├── video.mp4                        │
+│  │   │   └── thumbnail.png                    │
+│  │   └── twitter/                             │
+│  │       ├── video.mp4                        │
+│  │       └── thumbnail.png                    │
+└─────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────┐
+│            Amazon DynamoDB Tables               │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  creator-dashboard-users                        │
+│  ├── PK: id                                    │
+│  └── GSI: email-index                          │
+│                                                 │
+│  creator-dashboard-content                      │
+│  ├── PK: id                                    │
+│  └── GSI: user-index                           │
+│                                                 │
+│  creator-dashboard-adaptations                  │
+│  ├── PK: id                                    │
+│  └── GSI: content-index                        │
+│                                                 │
+│  creator-dashboard-publish-jobs                 │
+│  ├── PK: id                                    │
+│  └── GSI: content-index                        │
+│                                                 │
+│  creator-dashboard-analytics                    │
+│  ├── PK: id                                    │
+│  └── GSI: content-index                        │
+│                                                 │
+│  creator-dashboard-ad-placements                │
+│  ├── PK: id                                    │
+│  └── GSI: content-index                        │
+└─────────────────────────────────────────────────┘
+```
+
+## 7. Microservices Communication
+
+```
+┌──────────────┐     HTTP/REST      ┌──────────────┐
+│   Frontend   │◄──────────────────►│  Backend API │
+│   (Next.js)  │                    │  (FastAPI)   │
+└──────────────┘                    └───────┬──────┘
+                                            │
+                    ┌───────────────────────┼───────────────────────┐
+                    │                       │                       │
+                    ▼                       ▼                       ▼
+            ┌──────────────┐        ┌──────────────┐      ┌──────────────┐
+            │   Redis      │        │  DynamoDB    │      │   Amazon S3  │
+            │  (Cache)     │        │  (Database)  │      │  (Storage)   │
+            └──────┬───────┘        └──────────────┘      └──────────────┘
+                   │
+                   │ Message Queue
+                   │
+                   ▼
+            ┌──────────────┐
+            │    Celery    │
+            │   Workers    │
+            └──────┬───────┘
+                   │
+                   ├─────────────────┬─────────────────┐
+                   │                 │                 │
+                   ▼                 ▼                 ▼
+           ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+           │   FFmpeg     │  │   Bedrock    │  │  Platform    │
+           │ (Processing) │  │  (AI Models) │  │    APIs      │
+           └──────────────┘  └──────────────┘  └──────────────┘
+```
+
+## 8. Deployment Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Docker Host                          │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │   Frontend   │  │   Backend    │  │    Redis     │ │
+│  │  Container   │  │  Container   │  │  Container   │ │
+│  │  Port: 3000  │  │  Port: 8000  │  │  Port: 6379  │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘ │
+│                                                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │   Celery     │  │   Celery     │  │  LocalStack  │ │
+│  │   Worker     │  │    Beat      │  │  (Dev Only)  │ │
+│  │  Container   │  │  Container   │  │  Port: 4566  │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘ │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          │ AWS SDK
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│                      AWS Cloud                          │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │   Bedrock    │  │  DynamoDB    │  │   Amazon S3  │ │
+│  │ Nova Models  │  │   Tables     │  │    Bucket    │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘ │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+These diagrams illustrate the complete system architecture and data flow for the Creator Dashboard platform.
