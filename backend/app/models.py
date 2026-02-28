@@ -7,9 +7,9 @@ from decimal import Decimal
 
 class Platform(str, Enum):
     YOUTUBE = "youtube"
-    INSTAGRAM = "instagram"
-    TIKTOK = "tiktok"
-    TWITTER = "twitter"
+    # INSTAGRAM = "instagram"  # Commented out - API credentials not configured
+    # TIKTOK = "tiktok"  # Commented out - API credentials not configured
+    # TWITTER = "twitter"  # Commented out - API credentials not configured
 
 
 class UploadStatus(str, Enum):

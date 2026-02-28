@@ -17,24 +17,25 @@ class VideoProcessor:
             "formats": ["mp4"],
             "max_duration": 43200  # 12 hours
         },
-        "instagram": {
-            "aspect_ratio": "1:1",
-            "max_resolution": (1080, 1080),
-            "formats": ["mp4"],
-            "max_duration": 60
-        },
-        "tiktok": {
-            "aspect_ratio": "9:16",
-            "max_resolution": (1080, 1920),
-            "formats": ["mp4"],
-            "max_duration": 600  # 10 minutes
-        },
-        "twitter": {
-            "aspect_ratio": "16:9",
-            "max_resolution": (1920, 1080),
-            "formats": ["mp4"],
-            "max_duration": 140
-        }
+        # Instagram, TikTok, and Twitter specs commented out - not currently in use
+        # "instagram": {
+        #     "aspect_ratio": "1:1",
+        #     "max_resolution": (1080, 1080),
+        #     "formats": ["mp4"],
+        #     "max_duration": 60
+        # },
+        # "tiktok": {
+        #     "aspect_ratio": "9:16",
+        #     "max_resolution": (1080, 1920),
+        #     "formats": ["mp4"],
+        #     "max_duration": 600  # 10 minutes
+        # },
+        # "twitter": {
+        #     "aspect_ratio": "16:9",
+        #     "max_resolution": (1920, 1080),
+        #     "formats": ["mp4"],
+        #     "max_duration": 140
+        # }
     }
     
     @staticmethod

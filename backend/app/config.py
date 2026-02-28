@@ -29,12 +29,13 @@ class Settings(BaseSettings):
     # Social Media APIs
     youtube_client_id: Optional[str] = None
     youtube_client_secret: Optional[str] = None
-    instagram_app_id: Optional[str] = None
-    instagram_app_secret: Optional[str] = None
-    tiktok_client_key: Optional[str] = None
-    tiktok_client_secret: Optional[str] = None
-    twitter_api_key: Optional[str] = None
-    twitter_api_secret: Optional[str] = None
+    # Instagram, TikTok, and Twitter APIs commented out - not currently in use
+    # instagram_app_id: Optional[str] = None
+    # instagram_app_secret: Optional[str] = None
+    # tiktok_client_key: Optional[str] = None
+    # tiktok_client_secret: Optional[str] = None
+    # twitter_api_key: Optional[str] = None
+    # twitter_api_secret: Optional[str] = None
     
     class Config:
         env_file = ".env"

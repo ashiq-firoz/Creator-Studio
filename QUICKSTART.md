@@ -15,7 +15,7 @@ Perfect for testing without AWS costs.
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/ashiq-firoz/Creator-Studio.git
 cd creator-dashboard
 
 # Copy environment file
@@ -27,6 +27,12 @@ LOCALSTACK_ENDPOINT=http://localstack:4566
 ```
 
 ### Step 2: Start Services
+
+- To install make in windows (use cmd in admin mode (run as admin))
+```
+choco install make
+```
+
 
 ```bash
 # Build and start all services
@@ -65,7 +71,7 @@ For production deployment with real AWS services.
 
 ```bash
 # Clone repository
-git clone <repository-url>
+git clone https://github.com/ashiq-firoz/Creator-Studio.git
 cd creator-dashboard
 
 # Copy and edit environment
@@ -219,6 +225,8 @@ TIKTOK_CLIENT_SECRET=your_tiktok_client_secret
 TWITTER_API_KEY=your_twitter_api_key
 TWITTER_API_SECRET=your_twitter_api_secret
 ```
+
+**Don't have these credentials yet?** Follow the step-by-step guide: [SOCIAL_MEDIA_API_SETUP.md](SOCIAL_MEDIA_API_SETUP.md)
 
 Restart services:
 ```bash

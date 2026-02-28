@@ -1,5 +1,8 @@
 'use client'
 
+import { useState } from 'react'
+import DistributeModal from './DistributeModal'
+
 interface Content {
   id: string
   title: string
@@ -11,9 +14,12 @@ interface Content {
 interface ContentListProps {
   content: Content[]
   isLoading: boolean
+  onRefresh?: () => void
 }
 
-export default function ContentList({ content, isLoading }: ContentListProps) {
+export default function ContentList({ content, isLoading, onRefresh }: ContentListProps) {
+  const [selectedContent, setSelectedContent] = useState<string | null>(null)
+
   if (isLoading) {
     return (
       <div className="text-center py-12">
@@ -34,37 +40,57 @@ export default function ContentList({ content, isLoading }: ContentListProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold mb-4">Your Content</h2>
-      
-      <div className="grid gap-4">
-        {content.map((item) => (
-          <div
-            key={item.id}
-            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-          >
-            <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
-                <p className="text-gray-600 text-sm mb-2">{item.description}</p>
-                <div className="flex gap-4 text-sm text-gray-500">
-                  <span>Status: {item.upload_status}</span>
-                  <span>Created: {new Date(item.created_at).toLocaleDateString()}</span>
+    <>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Your Content</h2>
+          <p className="text-sm text-gray-500">Currently supporting YouTube only</p>
+        </div>
+        
+        <div className="grid gap-4">
+          {content.map((item) => (
+            <div
+              key={item.id}
+              className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+            >
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
+                  <p className="text-gray-600 text-sm mb-2">{item.description}</p>
+                  <div className="flex gap-4 text-sm text-gray-500">
+                    <span>Status: {item.upload_status}</span>
+                    <span>Created: {new Date(item.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => setSelectedContent(item.id)}
+                    disabled={item.upload_status !== 'completed'}
+                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    📺 Publish to YouTube
+                  </button>
+                  <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
+                    View
+                  </button>
                 </div>
               </div>
-              
-              <div className="flex gap-2">
-                <button className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm">
-                  Distribute
-                </button>
-                <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
-                  View
-                </button>
-              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+
+      {selectedContent && (
+        <DistributeModal
+          contentId={selectedContent}
+          onClose={() => setSelectedContent(null)}
+          onSuccess={() => {
+            setSelectedContent(null)
+            onRefresh?.()
+          }}
+        />
+      )}
+    </>
   )
 }

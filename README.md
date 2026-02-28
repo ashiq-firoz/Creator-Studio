@@ -4,11 +4,13 @@ AI-powered platform for content adaptation, distribution, and monetization using
 
 ## Features
 
-- **One-Click Cross-Platform Adaptation**: Upload once, automatically adapt for YouTube, Instagram, TikTok, and Twitter
+- **One-Click Cross-Platform Adaptation**: Upload once, automatically adapt for YouTube (more platforms coming soon)
 - **AI-Powered Content Generation**: Uses Amazon Bedrock Nova 2 Lite for text generation and Nova 2 Omni for vision tasks
-- **Unified Distribution**: Schedule or publish instantly across all platforms
+- **YouTube Distribution**: Schedule or publish instantly to YouTube
 - **Intelligent Analytics**: Real-time performance tracking and trend predictions
 - **Smart Monetization**: AI-powered ad placement detection and revenue optimization
+
+> **Note**: Currently configured for YouTube only. Instagram, TikTok, and Twitter support is available but commented out. See [YOUTUBE_ONLY_MODE.md](YOUTUBE_ONLY_MODE.md) for details.
 
 ## Architecture
 
@@ -36,28 +38,34 @@ AI-powered platform for content adaptation, distribution, and monetization using
   - Bedrock access (Nova models enabled)
 - AWS CLI configured (for production setup)
 
-## Quick Start (Development with LocalStack)
+## Quick Start
 
-1. Clone the repository:
+### 🏃 Fast Track (5 minutes - No social media APIs needed)
+
 ```bash
+# 1. Clone and configure
 git clone https://github.com/ashiq-firoz/Creator-Studio.git
 cd creator-dashboard
-```
-
-2. Copy environment file:
-```bash
 cp .env.example .env
+
+# 2. Start services
+make build && make up
+
+# 3. Access the application
+# Frontend: http://localhost:3000
+# Backend API: http://localhost:8000
+# API Docs: http://localhost:8000/docs
 ```
 
-3. Start services with Docker Compose:
-```bash
-docker-compose up -d
-```
+**New to the project?** Start here: [GET_STARTED.md](GET_STARTED.md)
 
-4. Access the application:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Documentation: http://localhost:8000/docs
+### 🎯 Full Setup (with social media integration)
+
+Need to post to YouTube, Instagram, or Twitter? Get API credentials first:
+
+📘 **[SOCIAL_MEDIA_API_SETUP.md](SOCIAL_MEDIA_API_SETUP.md)** - Complete step-by-step guide  
+📋 **[CREDENTIALS_SUMMARY.md](CREDENTIALS_SUMMARY.md)** - Quick overview  
+📖 **[API_CREDENTIALS_QUICK_REFERENCE.md](API_CREDENTIALS_QUICK_REFERENCE.md)** - Quick reference
 
 ## Production Setup
 
@@ -101,6 +109,8 @@ TIKTOK_CLIENT_SECRET=your_tiktok_client_secret
 TWITTER_API_KEY=your_twitter_api_key
 TWITTER_API_SECRET=your_twitter_api_secret
 ```
+
+**Need help getting these credentials?** See the detailed guide: [SOCIAL_MEDIA_API_SETUP.md](SOCIAL_MEDIA_API_SETUP.md)
 
 ### 4. Deploy with Docker
 

@@ -30,8 +30,8 @@ export default function Home() {
             Automate Your Content Creation Workflow
           </h2>
           <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
-            Upload once, distribute everywhere. AI-powered platform for content adaptation,
-            multi-platform distribution, and intelligent monetization.
+            Upload once, optimize for YouTube. AI-powered platform for content adaptation,
+            distribution, and intelligent monetization. More platforms coming soon!
           </p>
 
           <div className="grid md:grid-cols-3 gap-8 mt-16">
@@ -39,17 +39,17 @@ export default function Home() {
               <div className="text-4xl mb-4">🎬</div>
               <h3 className="text-xl font-bold mb-3">One-Click Adaptation</h3>
               <p className="text-gray-600">
-                Automatically adapt your content for YouTube, Instagram, TikTok, and Twitter
-                with AI-generated titles, descriptions, and thumbnails.
+                Automatically adapt your content for YouTube with AI-generated 
+                titles, descriptions, and thumbnails. More platforms coming soon!
               </p>
             </div>
 
             <div className="bg-white p-8 rounded-xl shadow-lg">
-              <div className="text-4xl mb-4">🚀</div>
-              <h3 className="text-xl font-bold mb-3">Unified Distribution</h3>
+              <div className="text-4xl mb-4">📺</div>
+              <h3 className="text-xl font-bold mb-3">YouTube Distribution</h3>
               <p className="text-gray-600">
-                Schedule or publish instantly across all platforms simultaneously.
-                Track performance in real-time from one dashboard.
+                Schedule or publish instantly to YouTube. Track performance 
+                in real-time from one dashboard.
               </p>
             </div>
 
@@ -61,6 +61,12 @@ export default function Home() {
                 without disrupting viewer experience.
               </p>
             </div>
+          </div>
+
+          <div className="mt-8 p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-800 text-center">
+              🚀 Currently supporting YouTube. Instagram, TikTok, and Twitter coming soon!
+            </p>
           </div>
 
           <div className="mt-16">

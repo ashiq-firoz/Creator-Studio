@@ -201,7 +201,7 @@ async def distribute_content(
     request: PublishRequest,
     current_user: dict = Depends(get_current_user)
 ):
-    """Distribute content to selected platforms"""
+    """Distribute content to selected platforms (currently YouTube only)"""
     content = db.get_content(request.content_id)
     
     if not content:
@@ -209,6 +209,14 @@ async def distribute_content(
     
     if content['user_id'] != current_user['id']:
         raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Validate only YouTube is requested
+    unsupported_platforms = [p for p in request.platforms if p != Platform.YOUTUBE]
+    if unsupported_platforms:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Only YouTube is currently supported. Unsupported platforms: {[p.value for p in unsupported_platforms]}"
+        )
     
     # Create publish job
     job_data = {
@@ -222,15 +230,16 @@ async def distribute_content(
     job_id = db.create_publish_job(job_data)
     
     # In production, this would trigger actual platform publishing
-    # For now, we'll simulate success
+    # For now, we'll simulate success for YouTube only
     platform_results = {}
     for platform in request.platforms:
-        platform_results[platform.value] = {
-            "platform": platform.value,
-            "success": True,
-            "post_url": f"https://{platform.value}.com/post/{content['id']}",
-            "error": None
-        }
+        if platform == Platform.YOUTUBE:
+            platform_results[platform.value] = {
+                "platform": platform.value,
+                "success": True,
+                "post_url": f"https://youtube.com/watch?v={content['id']}",
+                "error": None
+            }
     
     db.update_publish_job(job_id, {
         "status": PublishStatus.COMPLETED.value,

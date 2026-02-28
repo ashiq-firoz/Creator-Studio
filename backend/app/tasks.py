@@ -74,7 +74,9 @@ def generate_platform_adaptations(self, content_id: str):
         # Create temp directory for outputs
         output_dir = tempfile.mkdtemp()
         
-        platforms = [Platform.YOUTUBE, Platform.INSTAGRAM, Platform.TIKTOK, Platform.TWITTER]
+        # Only YouTube is currently enabled
+        platforms = [Platform.YOUTUBE]
+        # platforms = [Platform.YOUTUBE, Platform.INSTAGRAM, Platform.TIKTOK, Platform.TWITTER]  # Uncomment when other APIs are configured
         
         for platform in platforms:
             try:

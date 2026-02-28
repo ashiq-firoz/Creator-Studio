@@ -6,11 +6,12 @@ from app.models import (
 
 
 def test_platform_enum():
-    """Test Platform enum values"""
+    """Test Platform enum values - currently only YouTube is enabled"""
     assert Platform.YOUTUBE.value == "youtube"
-    assert Platform.INSTAGRAM.value == "instagram"
-    assert Platform.TIKTOK.value == "tiktok"
-    assert Platform.TWITTER.value == "twitter"
+    # Instagram, TikTok, and Twitter are commented out
+    # assert Platform.INSTAGRAM.value == "instagram"
+    # assert Platform.TIKTOK.value == "tiktok"
+    # assert Platform.TWITTER.value == "twitter"
 
 
 def test_upload_status_enum():
